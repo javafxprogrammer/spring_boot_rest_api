@@ -4,7 +4,7 @@
  */
 package com.example.spring_rest_api.repository;
 
-import com.example.spring_rest_api.model.Student;
+import com.example.spring_rest_api.models.Student;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

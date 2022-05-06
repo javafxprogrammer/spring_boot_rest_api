@@ -4,7 +4,7 @@
  */
 package com.example.spring_rest_api.controllers;
 
-import com.example.spring_rest_api.model.Student;
+import com.example.spring_rest_api.models.Student;
 import com.example.spring_rest_api.services.StudentService;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -34,38 +35,41 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @DeleteMapping("deleteStudent/id/{id}")
+    @DeleteMapping(path = "deleteStudent/id/{id}")
     public void deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
     }
 
-    @GetMapping("getStudent/id/{id}")
+    @GetMapping(path = "getStudent/id/{id}")
     public Optional<Student> getStudent(@PathVariable Long id) {
         return studentService.getStudent(id);
     }
 
-    @GetMapping("getStudent/email/{email}")
+    @GetMapping(path = "getStudent/email/{email}")
     public Optional<Student> getStudentByEmail(@PathVariable String email) {
         return studentService.getStudentByEmail(email);
     }
 
-    @GetMapping("getStudent/name/{name}")
+    @GetMapping(path = "getStudent/name/{name}")
     public List<Student> getStudentByName(@PathVariable String name) {
         return studentService.getStudentByName(name);
     }
 
-    @GetMapping("getAllStudents")
+    @GetMapping(path = "getAllStudents")
     public List<Student> fetchAllStudents() {
         return studentService.getAllStudents();
     }
 
-    @PostMapping("createStudent")
+    @PostMapping(path = "createStudent")
     public void createStudent(@RequestBody Student student) {
         studentService.createStudent(student);
     }
 
-    @PutMapping("editStudent")
-    public void editStudent(@RequestBody Student student) {
-        studentService.editStudent(student);
+    @PutMapping(path = "editStudent/{id}")
+    public void editStudent(
+            @PathVariable Long id, 
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email) {
+        studentService.editStudent(id, name, email);
     }
 }

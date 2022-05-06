@@ -40,12 +40,19 @@ public class StudentService {
       student1.get().setName(student.getName());
       student1.get().setEmail(student.getEmail());
       student1.get().setDob(student.getDob());
-      student1.get().setAge(student.getAge());
       studentRepository.save(student1.get());
     }
 
     public void deleteStudent(Long id) {
         studentRepository.delete(studentRepository.findById(id).get());
+    }
+
+    public Optional<Student> getStudentByEmail(String email) {
+        return studentRepository.findStudentByEmail(email);
+    }
+
+    public List<Student> getStudentByName(String name) {
+        return studentRepository.findStudentByName(name);
     }
 }
 

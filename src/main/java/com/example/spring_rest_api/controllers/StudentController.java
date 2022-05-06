@@ -34,14 +34,24 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @DeleteMapping("deleteStudent/{id}")
+    @DeleteMapping("deleteStudent/id/{id}")
     public void deleteStudent(@PathVariable Long id) {
-         studentService.deleteStudent(id);
+        studentService.deleteStudent(id);
     }
 
-    @GetMapping("getStudent/{id}")
+    @GetMapping("getStudent/id/{id}")
     public Optional<Student> getStudent(@PathVariable Long id) {
         return studentService.getStudent(id);
+    }
+
+    @GetMapping("getStudent/email/{email}")
+    public Optional<Student> getStudentByEmail(@PathVariable String email) {
+        return studentService.getStudentByEmail(email);
+    }
+
+    @GetMapping("getStudent/name/{name}")
+    public List<Student> getStudentByName(@PathVariable String name) {
+        return studentService.getStudentByName(name);
     }
 
     @GetMapping("getAllStudents")

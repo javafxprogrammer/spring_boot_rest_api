@@ -2,12 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.example.spring_rest_api.services;
+package com.example.spring_rest_api.service;
 
-import com.example.spring_rest_api.models.Student;
+import com.example.spring_rest_api.dto.StudentDTO;
+import com.example.spring_rest_api.model.Student;
 import com.example.spring_rest_api.repository.StudentRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +28,18 @@ public class StudentService {
     public Optional<Student> getStudent(Long id) {
         return studentRepository.findById(id);
     }
-
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    
+    public List<StudentDTO> getAllStudents() {
+         return studentRepository.findAll().stream().map(this::studentToDTO).collect(Collectors.toList());
+    }
+    
+    private StudentDTO studentToDTO(Student student){
+        StudentDTO studentDTO = new StudentDTO();
+        studentDTO.setId(student.getId());
+        studentDTO.setAge(student.getAge());
+        studentDTO.setName(student.getName());
+        studentDTO.setEmail(student.getEmail());
+        return studentDTO;
     }
 
     public void createStudent(Student student) {

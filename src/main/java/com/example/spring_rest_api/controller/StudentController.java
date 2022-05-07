@@ -2,13 +2,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.example.spring_rest_api.controllers;
+package com.example.spring_rest_api.controller;
 
-import com.example.spring_rest_api.models.Student;
-import com.example.spring_rest_api.services.StudentService;
+import com.example.spring_rest_api.dto.StudentDTO;
+import com.example.spring_rest_api.model.Student;
+import com.example.spring_rest_api.service.StudentService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,8 +45,11 @@ public class StudentController {
     }
 
     @GetMapping(path = "getStudent/id/{id}")
-    public Optional<Student> getStudent(@PathVariable Long id) {
-        return studentService.getStudent(id);
+    public ResponseEntity<Optional<Student>> getStudent(@PathVariable Long id) {
+        HttpHeaders headers= new HttpHeaders();
+        headers.add("desc", "get student");
+        Optional<Student> body = studentService.getStudent(id);
+        return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "getStudent/email/{email}")
@@ -56,7 +63,7 @@ public class StudentController {
     }
 
     @GetMapping(path = "getAllStudents")
-    public List<Student> fetchAllStudents() {
+    public List<StudentDTO> fetchAllStudents() {
         return studentService.getAllStudents();
     }
 

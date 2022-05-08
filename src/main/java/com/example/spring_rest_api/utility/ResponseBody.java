@@ -8,18 +8,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  *
  * @author gn1398
  * @param <T>
+ * @param <U>
  */
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
-public class ResponseBody<T> {
-    Integer status;
-    T message;
+public class ResponseBody<T, U> {
+    T status;
+    U message;
 }

@@ -39,14 +39,13 @@ public class StudentService {
         return studentRepository.findAll().stream().map(this::studentToStudentDTO).collect(Collectors.toList());
     }
 
-    public boolean createStudent(StudentDTO studentDTO) {
+    public void createStudent(StudentDTO studentDTO) {
         Student student = StudentDTOtoStudent(studentDTO);
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
         if (studentOptional.isPresent()) {
-            throw new IllegalStateException("failed to create new student because email "+student.getEmail()+" already exist");
-        } 
-            studentRepository.save(student);
-            return true;
+            throw new IllegalStateException("failed to create new student because email " + student.getEmail() + " already exist");
+        }
+        studentRepository.save(student);
     }
 
     public void editStudent(Long id, String name, String email) {
@@ -77,19 +76,24 @@ public class StudentService {
 
     public void deleteStudent(Long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
-        if (!studentOptional.isPresent()) {
-            throw new IllegalStateException("failed to delete student because student with id " + id + " does not exist");
-        } else {
+        if (studentOptional.isPresent()) {
             studentRepository.delete(studentRepository.findById(id).get());
+        } else {
+            throw new IllegalStateException("failed to delete student because student with id " + id + " does not exist");
         }
     }
 
-    public Optional<Student> getStudentByEmail(String email) {
-        return studentRepository.findStudentByEmail(email);
+    public StudentNoDobDTO getStudentByEmail(String email) {
+        Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
+        if (studentOptional.isPresent()) {
+            return studentToStudentDTO(studentOptional.get());
+        }
+        return null;
     }
 
-    public List<Student> getStudentByName(String name) {
-        return studentRepository.findStudentByName(name);
+    public List<StudentNoDobDTO> getStudentByName(String name) {
+        List<Student> students = studentRepository.findStudentByName(name);
+        return students.stream().map(this::studentToStudentDTO).collect(Collectors.toList());
     }
 
     private StudentNoDobDTO studentToStudentDTO(Student student) {

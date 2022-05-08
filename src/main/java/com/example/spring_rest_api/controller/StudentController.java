@@ -1,16 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.example.spring_rest_api.controller;
 
 import com.example.spring_rest_api.dto.StudentDTO;
 import com.example.spring_rest_api.dto.StudentNoDobDTO;
-import com.example.spring_rest_api.model.Student;
 import com.example.spring_rest_api.utility.ResponseBody;
 import com.example.spring_rest_api.service.StudentService;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,8 +37,14 @@ public class StudentController {
     }
 
     @DeleteMapping(path = "deleteStudent/id/{id}")
-    public void deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<ResponseBody> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("dec", "deleting student");
+        ResponseBody<Integer, String> responseBody = new ResponseBody();
+        responseBody.setStatus(HttpStatus.OK.value());
+        responseBody.setMessage("student succesfully deleted");
+        return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping(path = "getStudent/id/{id}")
@@ -51,25 +52,43 @@ public class StudentController {
         StudentNoDobDTO studentNoDobDTO = studentService.getStudent(id);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("desc", "get student by id");
-        ResponseBody<StudentNoDobDTO> responseBody = new ResponseBody();
-        responseBody.setStatus(200);
+        ResponseBody<Integer, StudentNoDobDTO> responseBody = new ResponseBody();
+        responseBody.setStatus(HttpStatus.OK.value());
         responseBody.setMessage(studentNoDobDTO);
         return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping(path = "getStudent/email/{email}")
-    public Optional<Student> getStudentByEmail(@PathVariable String email) {
-        return studentService.getStudentByEmail(email);
+    public ResponseEntity<ResponseBody> getStudentByEmail(@PathVariable String email) {
+        StudentNoDobDTO studentNoDobDTO = studentService.getStudentByEmail(email);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("desc", "get student by email");
+        ResponseBody<Integer, StudentNoDobDTO> responseBody = new ResponseBody();
+        responseBody.setStatus(HttpStatus.OK.value());
+        responseBody.setMessage(studentNoDobDTO);
+        return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping(path = "getStudent/name/{name}")
-    public List<Student> getStudentByName(@PathVariable String name) {
-        return studentService.getStudentByName(name);
+    public ResponseEntity<ResponseBody> getStudentByName(@PathVariable String name) {
+        List<StudentNoDobDTO> studentNoDobDTOs = studentService.getStudentByName(name);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("desc", "get student by email");
+        ResponseBody<Integer, List<StudentNoDobDTO>> responseBody = new ResponseBody();
+        responseBody.setStatus(HttpStatus.OK.value());
+        responseBody.setMessage(studentNoDobDTOs);
+        return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping(path = "getAllStudents")
-    public List<StudentNoDobDTO> fetchAllStudents() {
-        return studentService.getAllStudents();
+    public ResponseEntity<ResponseBody> fetchAllStudents() {
+        List<StudentNoDobDTO> studentNoDobDTOs = studentService.getAllStudents();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("desc", "get student by email");
+        ResponseBody<Integer, List<StudentNoDobDTO>> responseBody = new ResponseBody();
+        responseBody.setStatus(HttpStatus.OK.value());
+        responseBody.setMessage(studentNoDobDTOs);
+        return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @PostMapping(path = "createStudent")
@@ -77,17 +96,24 @@ public class StudentController {
         studentService.createStudent(studentDTO);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("dec", "creating student");
-        ResponseBody<String> responseBody = new ResponseBody();
-        responseBody.setStatus(200);
+        ResponseBody<Integer, String> responseBody = new ResponseBody();
+        responseBody.setStatus(HttpStatus.OK.value());
         responseBody.setMessage("student succesfully created");
         return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @PutMapping(path = "editStudent/{id}")
-    public void editStudent(
+    public ResponseEntity<ResponseBody> editStudent(
             @PathVariable Long id,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email) {
+        
         studentService.editStudent(id, name, email);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("dec", "editing student");
+        ResponseBody<Integer, String> responseBody = new ResponseBody();
+        responseBody.setStatus(HttpStatus.OK.value());
+        responseBody.setMessage("student succesfully edited");
+        return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 }

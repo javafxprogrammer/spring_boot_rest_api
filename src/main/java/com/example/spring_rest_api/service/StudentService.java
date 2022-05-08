@@ -4,6 +4,7 @@
  */
 package com.example.spring_rest_api.service;
 
+import com.example.spring_rest_api.dto.StudentNoDobDTO;
 import com.example.spring_rest_api.dto.StudentDTO;
 import com.example.spring_rest_api.model.Student;
 import com.example.spring_rest_api.repository.StudentRepository;
@@ -25,30 +26,27 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public Optional<Student> getStudent(Long id) {
-        return studentRepository.findById(id);
-    }
-    
-    public List<StudentDTO> getAllStudents() {
-         return studentRepository.findAll().stream().map(this::studentToDTO).collect(Collectors.toList());
-    }
-    
-    private StudentDTO studentToDTO(Student student){
-        StudentDTO studentDTO = new StudentDTO();
-        studentDTO.setId(student.getId());
-        studentDTO.setAge(student.getAge());
-        studentDTO.setName(student.getName());
-        studentDTO.setEmail(student.getEmail());
-        return studentDTO;
+    public StudentNoDobDTO getStudent(Long id) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isPresent()) {
+            return studentToStudentDTO(studentOptional.get());
+        } else {
+            throw new IllegalStateException("student of id " + id + " does not exist");
+        }
     }
 
-    public void createStudent(Student student) {
+    public List<StudentNoDobDTO> getAllStudents() {
+        return studentRepository.findAll().stream().map(this::studentToStudentDTO).collect(Collectors.toList());
+    }
+
+    public boolean createStudent(StudentDTO studentDTO) {
+        Student student = StudentDTOtoStudent(studentDTO);
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
         if (studentOptional.isPresent()) {
-            throw new IllegalStateException("failed to create new student because email already exist");
-        } else {
+            throw new IllegalStateException("failed to create new student because email "+student.getEmail()+" already exist");
+        } 
             studentRepository.save(student);
-        }
+            return true;
     }
 
     public void editStudent(Long id, String name, String email) {
@@ -73,7 +71,7 @@ public class StudentService {
                     studenOptional.get().setName(name);
                 }
             }
-             studentRepository.save(studenOptional.get());
+            studentRepository.save(studenOptional.get());
         }
     }
 
@@ -92,5 +90,22 @@ public class StudentService {
 
     public List<Student> getStudentByName(String name) {
         return studentRepository.findStudentByName(name);
+    }
+
+    private StudentNoDobDTO studentToStudentDTO(Student student) {
+        StudentNoDobDTO studentDTO = new StudentNoDobDTO();
+        studentDTO.setId(student.getId());
+        studentDTO.setAge(student.getAge());
+        studentDTO.setName(student.getName());
+        studentDTO.setEmail(student.getEmail());
+        return studentDTO;
+    }
+
+    private Student StudentDTOtoStudent(StudentDTO studentDTO) {
+        Student student = new Student();
+        student.setDob(studentDTO.getDob());
+        student.setName(studentDTO.getName());
+        student.setEmail(studentDTO.getEmail());
+        return student;
     }
 }

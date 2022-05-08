@@ -2,28 +2,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.example.spring_rest_api.dto;
+package com.example.spring_rest_api.utility;
 
-import java.time.LocalDate;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  *
  * @author gn1398
+ * @param <T>
  */
-@Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class StudentDTO {
-
-    private Long id;
-    private String name;
-    private String email;
-    private LocalDate dob;
-
+@AllArgsConstructor
+@Setter
+@Getter
+public class ResponseBody<T> {
+    Integer status;
+    T message;
 }

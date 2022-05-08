@@ -5,7 +5,9 @@
 package com.example.spring_rest_api.controller;
 
 import com.example.spring_rest_api.dto.StudentDTO;
+import com.example.spring_rest_api.dto.StudentNoDobDTO;
 import com.example.spring_rest_api.model.Student;
+import com.example.spring_rest_api.utility.ResponseBody;
 import com.example.spring_rest_api.service.StudentService;
 import java.util.List;
 import java.util.Optional;
@@ -45,11 +47,14 @@ public class StudentController {
     }
 
     @GetMapping(path = "getStudent/id/{id}")
-    public ResponseEntity<Optional<Student>> getStudent(@PathVariable Long id) {
-        HttpHeaders headers= new HttpHeaders();
-        headers.add("desc", "get student");
-        Optional<Student> body = studentService.getStudent(id);
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+    public ResponseEntity<ResponseBody> getStudent(@PathVariable Long id) {
+        StudentNoDobDTO studentNoDobDTO = studentService.getStudent(id);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("desc", "get student by id");
+        ResponseBody<StudentNoDobDTO> responseBody = new ResponseBody();
+        responseBody.setStatus(200);
+        responseBody.setMessage(studentNoDobDTO);
+        return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping(path = "getStudent/email/{email}")
@@ -63,18 +68,24 @@ public class StudentController {
     }
 
     @GetMapping(path = "getAllStudents")
-    public List<StudentDTO> fetchAllStudents() {
+    public List<StudentNoDobDTO> fetchAllStudents() {
         return studentService.getAllStudents();
     }
 
     @PostMapping(path = "createStudent")
-    public void createStudent(@RequestBody Student student) {
-        studentService.createStudent(student);
+    public ResponseEntity<ResponseBody> createStudent(@RequestBody StudentDTO studentDTO) {
+        studentService.createStudent(studentDTO);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("dec", "creating student");
+        ResponseBody<String> responseBody = new ResponseBody();
+        responseBody.setStatus(200);
+        responseBody.setMessage("student succesfully created");
+        return new ResponseEntity<>(responseBody, httpHeaders, HttpStatus.OK);
     }
 
     @PutMapping(path = "editStudent/{id}")
     public void editStudent(
-            @PathVariable Long id, 
+            @PathVariable Long id,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email) {
         studentService.editStudent(id, name, email);

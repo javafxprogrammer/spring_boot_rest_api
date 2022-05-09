@@ -8,6 +8,8 @@ import com.example.spring_rest_api.dto.StudentNoDobDTO;
 import com.example.spring_rest_api.dto.StudentDTO;
 import com.example.spring_rest_api.model.Student;
 import com.example.spring_rest_api.repository.StudentRepository;
+import com.example.spring_rest_api.utility.Mapper;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,22 +27,25 @@ public class StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+    
+    @Autowired
+    private Mapper mapper;
 
     public StudentNoDobDTO getStudent(Long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isPresent()) {
-            return studentToStudentDTO(studentOptional.get());
+            return mapper.studentToDTO(studentOptional.get());
         } else {
             throw new IllegalStateException("student of id " + id + " does not exist");
         }
     }
 
     public List<StudentNoDobDTO> getAllStudents() {
-        return studentRepository.findAll().stream().map(this::studentToStudentDTO).collect(Collectors.toList());
+        return studentRepository.findAll().stream().map(mapper::studentToDTO).collect(Collectors.toList());
     }
 
     public void createStudent(StudentDTO studentDTO) {
-        Student student = StudentDTOtoStudent(studentDTO);
+        Student student = mapper.DTOtoStudent(studentDTO);
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
         if (studentOptional.isPresent()) {
             throw new IllegalStateException("failed to create new student because email " + student.getEmail() + " already exist");
@@ -86,30 +91,14 @@ public class StudentService {
     public StudentNoDobDTO getStudentByEmail(String email) {
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
         if (studentOptional.isPresent()) {
-            return studentToStudentDTO(studentOptional.get());
+            return mapper.studentToDTO(studentOptional.get());
         }
         return null;
     }
 
     public List<StudentNoDobDTO> getStudentByName(String name) {
         List<Student> students = studentRepository.findStudentByName(name);
-        return students.stream().map(this::studentToStudentDTO).collect(Collectors.toList());
+        return students.stream().map(mapper::studentToDTO).collect(Collectors.toList());
     }
 
-    private StudentNoDobDTO studentToStudentDTO(Student student) {
-        StudentNoDobDTO studentDTO = new StudentNoDobDTO();
-        studentDTO.setId(student.getId());
-        studentDTO.setAge(student.getAge());
-        studentDTO.setName(student.getName());
-        studentDTO.setEmail(student.getEmail());
-        return studentDTO;
-    }
-
-    private Student StudentDTOtoStudent(StudentDTO studentDTO) {
-        Student student = new Student();
-        student.setDob(studentDTO.getDob());
-        student.setName(studentDTO.getName());
-        student.setEmail(studentDTO.getEmail());
-        return student;
-    }
 }
